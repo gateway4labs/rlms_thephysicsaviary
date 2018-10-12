@@ -111,10 +111,17 @@ def get_laboratories():
                 if 'TRANSLATION_DATA' in translations_js_data:
                     translations_data = ast.literal_eval(translations_js_data.strip().split('=', 1)[1].strip())
                     eng_translations = translations_data.get('messages', {}).get('en', {})
+                    processed_translations = {
+
+                    }
+                    for key, value in eng_translations.items():
+                        processed_translations[key] = {
+                            'value': value,
+                        }
                     translations = {
                         'mails': {},
                         'translations': {
-                            'en': eng_translations,
+                            'en': processed_translations,
                         }
                     }
 
