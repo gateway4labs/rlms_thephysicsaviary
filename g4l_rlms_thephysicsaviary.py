@@ -47,7 +47,6 @@ class PhysicsAviaryAddForm(AddForm):
     DEFAULT_PUBLICLY_AVAILABLE = True
     DEFAULT_PUBLIC_IDENTIFIER = 'physicsaviary'
     DEFAULT_AUTOLOAD = True
-    DEFAULT_HEIGHT = '800'
 
     def __init__(self, add_or_edit, *args, **kwargs):
         super(PhysicsAviaryAddForm, self).__init__(*args, **kwargs)
@@ -146,6 +145,8 @@ FORM_CREATOR = PhysicsAviaryFormCreator()
 CAPABILITIES = [ Capabilities.WIDGET, Capabilities.URL_FINDER, Capabilities.CHECK_URLS, Capabilities.TRANSLATIONS, ]
 
 class RLMS(BaseRLMS):
+
+    DEFAULT_HEIGHT = '800'
 
     def __init__(self, configuration, *args, **kwargs):
         self.configuration = json.loads(configuration or '{}')
