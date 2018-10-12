@@ -100,7 +100,7 @@ def get_laboratories():
             name = fig_caption.text
             href = 'https://www.thephysicsaviary.com/Physics/Programs/Labs/' + anchor_element['href']
             identifier = anchor_element['href']
-            translations = None
+            translations = {}
 
             lab_contents_text = requests.get(href).text
             lab_contents = BeautifulSoup(lab_contents_text, 'lxml')
