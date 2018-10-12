@@ -47,6 +47,7 @@ class PhysicsAviaryAddForm(AddForm):
     DEFAULT_PUBLICLY_AVAILABLE = True
     DEFAULT_PUBLIC_IDENTIFIER = 'physicsaviary'
     DEFAULT_AUTOLOAD = True
+    DEFAULT_HEIGHT = '800'
 
     def __init__(self, add_or_edit, *args, **kwargs):
         super(PhysicsAviaryAddForm, self).__init__(*args, **kwargs)
