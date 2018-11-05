@@ -226,7 +226,7 @@ def populate_cache(rlms):
     rlms.get_laboratories()
 
 PHYSICSAVIARY = register("PhysicsAviary", ['1.0'], __name__)
-PHYSICSAVIARY.add_local_periodic_task('Populating cache', populate_cache, hours = 23)
+PHYSICSAVIARY.add_local_periodic_task('Populating cache', populate_cache, hours = 15)
 
 DEBUG = PHYSICSAVIARY.is_debug() or (os.environ.get('G4L_DEBUG') or '').lower() == 'true' or False
 DEBUG_LOW_LEVEL = DEBUG and (os.environ.get('G4L_DEBUG_LOW') or '').lower() == 'true'
