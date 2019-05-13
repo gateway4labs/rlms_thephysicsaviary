@@ -147,7 +147,7 @@ CAPABILITIES = [ Capabilities.WIDGET, Capabilities.URL_FINDER, Capabilities.CHEC
 class RLMS(BaseRLMS):
 
     DEFAULT_HEIGHT = '800'
-    DEFAULT_SCALE = 8500
+    DEFAULT_SCALE = 8000
 
     def __init__(self, configuration, *args, **kwargs):
         self.configuration = json.loads(configuration or '{}')
