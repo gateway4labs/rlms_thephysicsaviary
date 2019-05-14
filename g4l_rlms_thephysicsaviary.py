@@ -225,7 +225,7 @@ class RLMS(BaseRLMS):
 
     def get_downloads(self, laboratory_id):
         return {
-            'en_ALL': url_for('physicsaviary.physicsaviary_download', laboratory_id=laboratory_id),
+            'en_ALL': url_for('physicsaviary.physicsaviary_download', laboratory_id=laboratory_id, _external=True),
         }
 
 def populate_cache(rlms):
