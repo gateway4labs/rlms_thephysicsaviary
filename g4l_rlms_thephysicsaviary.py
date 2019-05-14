@@ -238,7 +238,6 @@ physicsaviary_blueprint = Blueprint('physicsaviary', __name__)
 
 @physicsaviary_blueprint.route('/id/<path:laboratory_id>')
 def physicsaviary_download(laboratory_id):
-    print("FOOOOOO")
     laboratories, identifiers = get_laboratories()
     lab_data = identifiers.get(laboratory_id)
     if not lab_data:
