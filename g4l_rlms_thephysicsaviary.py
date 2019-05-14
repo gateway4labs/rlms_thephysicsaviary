@@ -18,6 +18,7 @@ import traceback
 import pprint
 
 import requests
+import webpage2html
 from bs4 import BeautifulSoup
 
 from flask import Blueprint, request, url_for
@@ -142,7 +143,7 @@ def get_laboratories():
 
 FORM_CREATOR = PhysicsAviaryFormCreator()
 
-CAPABILITIES = [ Capabilities.WIDGET, Capabilities.URL_FINDER, Capabilities.CHECK_URLS, Capabilities.TRANSLATIONS, ]
+CAPABILITIES = [ Capabilities.WIDGET, Capabilities.URL_FINDER, Capabilities.CHECK_URLS, Capabilities.TRANSLATIONS, Capabilities.DOWNLOAD_LIST ]
 
 class RLMS(BaseRLMS):
 
@@ -222,12 +223,33 @@ class RLMS(BaseRLMS):
         default_widget = dict( name = 'default', description = 'Default widget' )
         return [ default_widget ]
 
+    def get_downloads(self, laboratory_id):
+        return {
+            'en_ALL': url_for('physicsaviary.physicsaviary_download', laboratory_id=laboratory_id),
+        }
 
 def populate_cache(rlms):
     rlms.get_laboratories()
 
 PHYSICSAVIARY = register("PhysicsAviary", ['1.0'], __name__)
 PHYSICSAVIARY.add_local_periodic_task('Populating cache', populate_cache, hours = 15)
+
+physicsaviary_blueprint = Blueprint('physicsaviary', __name__)
+
+@physicsaviary_blueprint.route('/id/<path:laboratory_id>')
+def physicsaviary_download(laboratory_id):
+    print("FOOOOOO")
+    laboratories, identifiers = get_laboratories()
+    lab_data = identifiers.get(laboratory_id)
+    if not lab_data:
+        return "Not found", 404
+
+    link = lab_data['link']
+    generated = webpage2html.generate(index=link, keep_script=True, verbose=False)
+    return generated.encode()
+
+
+register_blueprint(physicsaviary_blueprint, url='/thephysicsaviary')
 
 DEBUG = PHYSICSAVIARY.is_debug() or (os.environ.get('G4L_DEBUG') or '').lower() == 'true' or False
 DEBUG_LOW_LEVEL = DEBUG and (os.environ.get('G4L_DEBUG_LOW') or '').lower() == 'true'
