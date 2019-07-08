@@ -116,9 +116,10 @@ def get_laboratories():
 
                     }
                     for key, value in eng_translations.items():
-                        processed_translations[key] = {
-                            'value': unicode(value),
-                        }
+                        if isinstance(value, (str, unicode)):
+                            processed_translations[key] = {
+                                'value': value,
+                            }
                     translations = {
                         'mails': {},
                         'translations': {
