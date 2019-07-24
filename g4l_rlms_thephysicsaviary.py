@@ -74,7 +74,7 @@ def get_laboratories():
         labs, identifiers = labs_and_identifiers
         return labs, identifiers
 
-    index = requests.get('https://www.thephysicsaviary.com/Physics/Programs/Labs/index.html').text
+    index = requests.get('https://www.thephysicsaviary.com/Physics/Programs/Labs/find.php').text
     soup = BeautifulSoup(index, 'lxml')
 
 
@@ -86,52 +86,44 @@ def get_laboratories():
         # }
     }
 
-    main_table = soup.find(id="MainTable")
+    for lab_div in soup.find_all(class_='ProgramTitle'):
+        if not lab_div.attrs.get('onclick') or '"' not in lab_div.attrs['onclick']:
+            continue
 
-    for table in main_table.find_all("table"):
-        for lab_row in table.find_all("tr"):
-            anchor_element = lab_row.find("a")
-            if not anchor_element:
-                continue
+        href = 'https://www.thephysicsaviary.com{}/index.html'.format(lab_div.attrs['onclick'].split('"')[1])        
+        name = lab_div.text
+        identifier = href.split('https://www.thephysicsaviary.com/Physics/Programs/Labs/')[1]
+        translations = {}
 
-            fig_caption = anchor_element.find('figcaption')
-            if not fig_caption:
-                continue
-            
-            name = fig_caption.text
-            href = 'https://www.thephysicsaviary.com/Physics/Programs/Labs/' + anchor_element['href']
-            identifier = anchor_element['href']
-            translations = {}
+        lab_contents_text = requests.get(href).text
+        lab_contents = BeautifulSoup(lab_contents_text, 'lxml')
+        translations_js = lab_contents.find('script', src='translations.js')
+        if translations_js:
+            translations_js_data = requests.get(href.rsplit('/', 1)[0] + '/translations.js').text
 
-            lab_contents_text = requests.get(href).text
-            lab_contents = BeautifulSoup(lab_contents_text, 'lxml')
-            translations_js = lab_contents.find('script', src='translations.js')
-            if translations_js:
-                translations_js_data = requests.get(href.rsplit('/', 1)[0] + '/translations.js').text
+            if 'TRANSLATION_DATA' in translations_js_data:
+                translations_data = ast.literal_eval(translations_js_data.strip().split('=', 1)[1].strip())
+                eng_translations = translations_data.get('messages', {}).get('en', {})
+                processed_translations = {
 
-                if 'TRANSLATION_DATA' in translations_js_data:
-                    translations_data = ast.literal_eval(translations_js_data.strip().split('=', 1)[1].strip())
-                    eng_translations = translations_data.get('messages', {}).get('en', {})
-                    processed_translations = {
-
-                    }
-                    for key, value in eng_translations.items():
-                        if isinstance(value, (str, unicode)):
-                            processed_translations[key] = {
-                                'value': value,
-                            }
-                    translations = {
-                        'mails': {},
-                        'translations': {
-                            'en': processed_translations,
+                }
+                for key, value in eng_translations.items():
+                    if isinstance(value, (str, unicode)):
+                        processed_translations[key] = {
+                            'value': value,
                         }
+                translations = {
+                    'mails': {},
+                    'translations': {
+                        'en': processed_translations,
                     }
+                }
 
-            identifiers[identifier] = {
-                'name': name,
-                'link': href,
-                'translations': translations,
-            }
+        identifiers[identifier] = {
+            'name': name,
+            'link': href,
+            'translations': translations,
+        }
 
     labs = []
     for identifier, identifier_data in identifiers.items():
